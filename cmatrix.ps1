@@ -18,7 +18,7 @@
   Base vertical speed for glyphs (default: 1).
 
 .PARAMETER Letters
-  Include letters (more “human” looking). Default is symbols-only.
+  Include letters (more "human" looking). Default is symbols-only.
 
 .PARAMETER WhiteLeader
   Use white for the leading glyph instead of neon green.
@@ -26,12 +26,20 @@
 .PARAMETER NoHardClear
   Skip the hard terminal reset on exit. (Default is to hard-clear.)
 
+.PARAMETER Help
+  Display this help message and exit.
+
 .EXAMPLE
-  ./cmatrix.ps1
-  ./cmatrix.ps1 -Fps 45 -Speed 2
-  ./cmatrix.ps1 -Letters
-  ./cmatrix.ps1 -WhiteLeader
-  ./cmatrix.ps1 -NoHardClear   # if you don't want a full terminal reset on exit
+  .\cmatrix.ps1
+  Classic Matrix effect with default settings.
+
+.EXAMPLE
+  .\cmatrix.ps1 -Letters -WhiteLeader -Fps 45
+  Human-readable Matrix with white leaders at high framerate.
+
+.EXAMPLE
+  .\cmatrix.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -40,8 +48,100 @@ param(
   [ValidateRange(1,5)][int]$Speed = 1,
   [switch]$Letters,
   [switch]$WhiteLeader,
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+Classic Matrix Digital Rain
+===========================
+
+SYNOPSIS
+    The iconic Matrix digital rain effect for your terminal.
+
+USAGE
+    .\cmatrix.ps1 [OPTIONS]
+    .\cmatrix.ps1 -h
+
+DESCRIPTION
+    Authentic Matrix-style "digital rain" that overlays on your existing
+    terminal content without clearing the background. Features cascading
+    green characters with trailing effects, customizable glyph sets, and
+    proper terminal behavior with safe cleanup on exit.
+
+OPTIONS
+    -Fps <int>         Target frames per second (5-120, default: 30)
+    -Speed <int>       Base vertical speed for glyphs (1-5, default: 1)
+    -Letters          Include letters for more "human" readable rain
+    -WhiteLeader      Use white leading glyphs instead of neon green
+    -NoHardClear      Skip full terminal reset on exit
+    -h                Show this help and exit
+
+VISUAL MODES
+    Standard Mode (default)
+        • Symbols and numbers: +=1234567890!@#$%^&*()<>?{}[]~
+        • Classic green-on-black Matrix aesthetic
+        • Neon green leading characters with fading green trails
+
+    Letters Mode (-Letters)
+        • Includes alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZ
+        • More "human" readable appearance
+        • Maintains same trailing and color effects
+
+LEADER STYLES
+    Green Leaders (default) - Classic neon green Matrix look
+    White Leaders (-WhiteLeader) - High contrast white leading characters
+
+EXAMPLES
+    .\cmatrix.ps1
+        Classic Matrix rain with symbols only
+
+    .\cmatrix.ps1 -Letters -WhiteLeader -Fps 45
+        Human-readable rain with white leaders at high speed
+
+    .\cmatrix.ps1 -Speed 3 -Letters
+        Fast-moving Matrix with readable characters
+
+    .\cmatrix.ps1 -NoHardClear -Speed 2
+        Persistent Matrix overlay (no cleanup on exit)
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+TECHNICAL FEATURES
+    - Overlay Mode: Preserves existing terminal content underneath
+    - Safe Rendering: Avoids last row to prevent unwanted scrolling
+    - Smooth Trails: Intensity-based fading for authentic digital rain
+    - Terminal Respect: Adapts to terminal size and theme
+    - Clean Exit: Full terminal reset unless -NoHardClear specified
+
+MATRIX AUTHENTICITY
+    - One glyph stream per terminal column
+    - Variable speed randomization for organic movement
+    - Intensity-based trail fading (bright to dim green)
+    - Random character cycling for digital chaos effect
+    - Proper edge handling and screen bounds respect
+
+PERFORMANCE NOTES
+    - Optimized for smooth animation at various framerates
+    - Memory efficient with single glyph per column
+    - Differential rendering for minimal terminal updates
+    - Exception-safe console operations
+
+DIGITAL RAIN PHYSICS
+    - Each column maintains independent glyph stream
+    - Leading character brightness: full intensity (green/white)
+    - Trail characters: graduated green intensity fade
+    - Stream reset when reaching bottom of terminal
+    - Random starting positions create staggered effect
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

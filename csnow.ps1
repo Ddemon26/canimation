@@ -1,30 +1,28 @@
 <#
 .SYNOPSIS
-  ASCII Rain/Snow (diff-write, cmatrix-style).
+  ASCII Snow simulation with gentle drift and varied flake types (diff-write, cmatrix-style).
 
 .DESCRIPTION
-  - Falling rain or snow with wind drift and density control.
+  - Peaceful falling snow with graceful movement and wind drift.
   - Diff-only writes (rewrite changed cells; erase with space).
+  - Multiple snowflake types for visual variety and natural appearance.
+  - Gentle physics with reduced wind sensitivity for realistic snow behavior.
   - Any key exits; Ctrl+C treated as input. No CancelKeyPress handler.
-  - Simple color themes.
-
-.PARAMETER Mode
-  Rain or Snow. Default: Rain
 
 .PARAMETER Fps
-  Frames per second. Default: 60
+  Frames per second. Default: 30
 
 .PARAMETER Speed
   Fall speed multiplier. Default: 1.0
 
 .PARAMETER Density
-  Drops/flakes per 100 screen cells. Default: 0.8
+  Snowflakes per 100 screen cells. Default: 0.6
 
 .PARAMETER Wind
   Horizontal drift in cells/sec (negative = left, positive = right). Default: 0
 
 .PARAMETER Theme
-  Default, Blue (rain), White (snow), Rainbow. Default: Default
+  Default, Blue, White, Rainbow. Default: Default
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit.
@@ -33,24 +31,23 @@
   Display this help message and exit.
 
 .EXAMPLE
-  .\crainsnow.ps1
-  Run with default rain settings.
+  .\csnow.ps1
+  Gentle snowfall with no wind.
 
 .EXAMPLE
-  .\crainsnow.ps1 -Mode Snow -Wind -5 -Theme White
-  Snow with left wind drift and white theme.
+  .\csnow.ps1 -Wind -3 -Theme White -Speed 0.7
+  Slow snow drifting left with pure white theme.
 
 .EXAMPLE
-  .\crainsnow.ps1 -h
+  .\csnow.ps1 -h
   Display help message.
 #>
 
 [CmdletBinding()]
 param(
-  [ValidateSet('Rain','Snow')][string]$Mode = 'Rain',
-  [ValidateRange(10,240)][int]$Fps = 60,
+  [ValidateRange(10,120)][int]$Fps = 30,
   [double]$Speed = 1.0,
-  [ValidateRange(0.0,50.0)][double]$Density = 0.8,
+  [ValidateRange(0.1,20.0)][double]$Density = 0.6,
   [int]$Count = 0,
   [double]$Wind = 0.0,
   [ValidateSet('Default','Blue','White','Rainbow')][string]$Theme = 'Default',
@@ -62,84 +59,87 @@ param(
 if ($Help) {
     $helpText = @"
 
-ASCII Rain & Snow Weather Simulation
-=====================================
+ASCII Snow Simulation
+=====================
 
 SYNOPSIS
-    Realistic falling rain or snow with wind effects and weather themes.
+    Peaceful falling snow with gentle drift and varied snowflake types.
 
 USAGE
-    .\crainsnow.ps1 [OPTIONS]
-    .\crainsnow.ps1 -h
+    .\csnow.ps1 [OPTIONS]
+    .\csnow.ps1 -h
 
 DESCRIPTION
-    Dynamic weather simulation featuring falling rain or snow with realistic
-    physics including wind drift, variable fall speeds, and atmospheric effects.
-    Multiple visual themes and density controls create diverse weather moods
-    from light drizzle to heavy storms.
+    Serene snow simulation featuring gentle snowflakes with graceful descent
+    patterns, natural wind drift, and multiple flake types for visual variety.
+    Snow physics create a peaceful, contemplative atmosphere with slower fall
+    speeds and reduced wind sensitivity compared to rain.
 
 OPTIONS
-    -Mode <string>       Weather type: 'Rain' or 'Snow' (default: Rain)
-    -Fps <int>          Target frames per second (10-240, default: 60)
+    -Fps <int>          Target frames per second (10-120, default: 30)
     -Speed <double>     Fall speed multiplier (default: 1.0)
-    -Density <double>   Drops/flakes per 100 screen cells (0.0-50.0, default: 0.8)
-    -Count <int>        Override automatic density with fixed particle count
+    -Density <double>   Snowflakes per 100 screen cells (0.1-20.0, default: 0.6)
+    -Count <int>        Override automatic density with fixed flake count
     -Wind <double>      Horizontal drift speed (negative=left, positive=right, default: 0)
     -Theme <string>     Color scheme: Default, Blue, White, Rainbow (default: Default)
     -NoHardClear       Don't clear screen on exit
     -h                 Show this help and exit
 
-WEATHER MODES
-    Rain - Vertical droplets with gravity-driven acceleration
-        • Fast falling speed with realistic physics
-        • Glyph selection based on wind: | / \ for different angles
-        • Heavy rain creates double-length streaks
-        • Default blue-white coloring for water droplets
+SNOW PHYSICS
+    - Gentle gravity with slower terminal velocity than rain
+    - Individual speed variation creates natural randomness
+    - Reduced wind sensitivity (50% of rain response) for realistic drift
+    - Multiple flake types: . (small), * (medium), o (large)
+    - Graceful movement patterns suitable for meditation
 
-    Snow - Gentle floating flakes with varied shapes
-        • Slower, more graceful descent patterns
-        • Mixed glyph types: . * o for size variation
-        • Lighter wind response for realistic drift
-        • Default white/gray coloring for ice crystals
+SNOWFLAKE TYPES
+    Small Flakes (.)  - Light, subtle snowfall particles
+    Medium Flakes (*) - Classic star-shaped snow crystals
+    Large Flakes (o)  - Heavy, prominent snow pieces
+    Random distribution creates natural variety
 
 EXAMPLES
-    .\crainsnow.ps1
-        Standard moderate rainfall
+    .\csnow.ps1
+        Gentle snowfall with mixed flake types
 
-    .\crainsnow.ps1 -Mode Snow -Wind -5 -Theme White
-        Snow drifting left with pure white theme
+    .\csnow.ps1 -Wind -3 -Theme White -Speed 0.7
+        Slow snow drifting left with pure white coloring
 
-    .\crainsnow.ps1 -Speed 2.0 -Density 3.0 -Wind 8
-        Heavy rainstorm with strong right wind
+    .\csnow.ps1 -Density 1.5 -Speed 0.4
+        Dense, very slow snowfall for peaceful effect
 
-    .\crainsnow.ps1 -Mode Snow -Theme Rainbow -Speed 0.5
-        Gentle rainbow snow (fantasy effect)
+    .\csnow.ps1 -Theme Blue -Wind 2
+        Cool blue snow with light right drift
 
-    .\crainsnow.ps1 -Count 200 -Theme Blue
-        Fixed 200 particles with blue theme
+    .\csnow.ps1 -Count 150 -Theme Rainbow
+        Fixed 150 rainbow snowflakes (fantasy effect)
 
 CONTROLS
     Any key or Ctrl+C to exit
 
 TECHNICAL NOTES
-    - Automatic density scaling adjusts particle count to terminal size
-    - Wind effects modify both position and glyph selection for rain
-    - Individual particle speed variation creates natural randomness
-    - Edge wrapping maintains consistent particle density
-    - Double-segment rain droplets appear during heavy precipitation
+    - Snowflake selection: random choice between . * o characters
+    - Gentle gravity: 8.0 cells/sec² (vs 30.0 for rain)
+    - Wind response: 50% sensitivity compared to rain droplets
+    - Speed variation: 0.3-0.8 multiplier for natural variation
+    - Lower default framerate (30 FPS) for contemplative pace
 
 VISUAL THEMES
-    Default - Natural colors: blue rain, white snow
-    Blue    - Cool blue tones for water or ice effects
-    White   - Pure white precipitation for classic look
-    Rainbow - Multi-colored particles for artistic effect
+    Default - Natural white/gray snow coloring
+    Blue    - Cool winter blue tones
+    White   - Pure white snowfall for high contrast
+    Rainbow - Multi-colored artistic snow effect
 
-WEATHER EFFECTS
-    - Light wind (±1-3): Subtle diagonal movement
-    - Moderate wind (±4-8): Noticeable drift and angle changes
-    - Strong wind (±9+): Dramatic horizontal movement
-    - High speed (1.5+): Creates streaking effects for heavy weather
-    - High density (2.0+): Simulates storms and heavy precipitation
+WEATHER INTENSITY GUIDE
+    Light Snow:     Speed 0.3-0.6, Density 0.2-0.5
+    Moderate Snow:  Speed 0.7-1.0, Density 0.6-1.2
+    Heavy Snow:     Speed 1.1-1.5, Density 1.3-3.0
+    Blizzard:       Speed 1.6+,    Density 3.1+, Wind ±5+
+
+PEACEFUL SETTINGS
+    Meditation:     Speed 0.3, Density 0.3, Wind 0, Theme White
+    Winter Evening: Speed 0.5, Density 0.8, Wind -1, Theme Default
+    Cozy Indoor:    Speed 0.4, Density 0.4, Wind 1, Theme Blue
 
 "@
     Write-Host $helpText
@@ -193,37 +193,33 @@ $script:PrevColor = $null  # int[]
 $script:NewChars  = $null
 $script:NewColor  = $null
 
-# --- Particles ------------------------------------------------------------------
+# --- Snow Particles -------------------------------------------------------------
 $script:Count = 0
 $script:Px = $null  # double[] x (float for wind)
 $script:Py = $null  # double[] y
 $script:Pv = $null  # double[] vertical speed factor
 $script:Glyph = $null # char[]
 
-function Ensure-Particles([int]$bw, [int]$bh){
-  $target = [int]([math]::Max(10, [math]::Round( ($Count -gt 0) ? $Count : ($Density * ($bw*$bh) / 100.0) )))
+function Ensure-Snowflakes([int]$bw, [int]$bh){
+  $target = [int]([math]::Max(8, [math]::Round( ($Count -gt 0) ? $Count : ($Density * ($bw*$bh) / 100.0) )))
   if ($script:Count -ne $target){
     $script:Count = $target
     $script:Px = New-Object 'double[]' $target
     $script:Py = New-Object 'double[]' $target
     $script:Pv = New-Object 'double[]' $target
     $script:Glyph = New-Object 'char[]' $target
-    for ($i=0; $i -lt $target; $i++){ Reset-Particle $bw $bh $i $true }
+    for ($i=0; $i -lt $target; $i++){ Reset-Snowflake $bw $bh $i $true }
   }
 }
 
-function Reset-Particle([int]$bw, [int]$bh, [int]$i, [bool]$randomY){
+function Reset-Snowflake([int]$bw, [int]$bh, [int]$i, [bool]$randomY){
   $script:Px[$i] = (Get-Random -Minimum 0.0 -Maximum ([double]$bw))
   $script:Py[$i] = if ($randomY) { (Get-Random -Minimum 0.0 -Maximum ([double]$bh)) } else { 0.0 }
-  $script:Pv[$i] = ( $Mode -eq 'Rain' ) ? (Get-Random -Minimum 0.8 -Maximum 1.4) : (Get-Random -Minimum 0.3 -Maximum 0.8)
-  if ($Mode -eq 'Rain'){
-    # pick one of '|', '/', '\' based on wind
-    $script:Glyph[$i] = ( ($Wind -gt 0.8) ? '\' : ( ($Wind -lt -0.8) ? '/' : '|' ) )
-  } else {
-    # snow: '.', '*', 'o' variety
-    $r = Get-Random -Minimum 0 -Maximum 3
-    $script:Glyph[$i] = ('.','*','o')[$r]
-  }
+  $script:Pv[$i] = Get-Random -Minimum 0.3 -Maximum 0.8  # Snow speed variation (gentler)
+
+  # Snowflake variety
+  $r = Get-Random -Minimum 0 -Maximum 3
+  $script:Glyph[$i] = ('.','*','o')[$r]
 }
 
 # --- Setup ----------------------------------------------------------------------
@@ -261,7 +257,7 @@ try {
         $script:PrevColor = New-Object 'int[]'  ($bufSize)
         $script:NewChars  = New-Object 'char[]' ($bufSize)
         $script:NewColor  = New-Object 'int[]'  ($bufSize)
-        Ensure-Particles $bw $bh
+        Ensure-Snowflakes $bw $bh
         try { [Console]::Write($AnsiClearHome) } catch {}
       }
 
@@ -271,49 +267,38 @@ try {
 
       $dt = $frameMs / 1000.0
 
-      # Update particles
+      # Update snowflakes
       for ($i=0; $i -lt $script:Count; $i++){
-        # Move
-        $gravity = ( $Mode -eq 'Rain' ) ? 30.0 : 8.0
-        $script:Py[$i] += $Speed * $script:Pv[$i] * $gravity * $dt
-        $script:Px[$i] += $Wind * $dt * ( ($Mode -eq 'Rain') ? 1.0 : 0.5 )
+        # Snow physics - gentler gravity
+        $script:Py[$i] += $Speed * $script:Pv[$i] * 8.0 * $dt
+        $script:Px[$i] += $Wind * $dt * 0.5  # Reduced wind sensitivity for snow
 
         # Respawn if off-screen
         if ($script:Py[$i] -gt $bh + 1){
-          Reset-Particle $bw $bh $i $false
+          Reset-Snowflake $bw $bh $i $false
         }
         if ($script:Px[$i] -lt -1){ $script:Px[$i] = $bw-1.0 }
         if ($script:Px[$i] -gt $bw){ $script:Px[$i] = 0.0 }
 
-        # Plot current position (rain can be 2-char streak depending on speed)
+        # Plot snowflake
         $x = [int]([math]::Round($script:Px[$i]))
         $y = [int]([math]::Round($script:Py[$i]))
         if ($x -ge 0 -and $x -le $maxX -and $y -ge 0 -and $y -le $maxY){
           $idx = $x + $bw*$y
           $script:NewChars[$idx] = $script:Glyph[$i]
-          # choose color
+
+          # Snow coloring
           switch ($Theme) {
-            'Default' {
-              if ($Mode -eq 'Rain'){ $packed = PackRGB 120 160 255 } else { $packed = PackRGB 230 230 230 }
-            }
-            'Blue'    { $packed = PackRGB 100 150 255 }
-            'White'   { $packed = PackRGB 235 235 235 }
+            'Default' { $packed = PackRGB 230 230 230 }  # White-gray snow
+            'Blue'    { $packed = PackRGB 180 200 255 }
+            'White'   { $packed = PackRGB 245 245 245 }
             'Rainbow' {
-              $h = ($i*13 + ($y*3)) % 360
-              $rgb = HSV-To-RGB $h 0.9 1.0
+              $h = ($i*17 + ($y*5)) % 360
+              $rgb = HSV-To-RGB $h 0.7 0.9
               $packed = PackRGB $rgb[0] $rgb[1] $rgb[2]
             }
           }
           $script:NewColor[$idx] = $packed
-          # simple 2nd segment for heavy rain
-          if ($Mode -eq 'Rain' -and $Speed*$script:Pv[$i] -gt 1.2){
-            $y2 = $y-1
-            if ($y2 -ge 0){
-              $idx2 = $x + $bw*$y2
-              $script:NewChars[$idx2] = ( ($Wind -gt 0.8) ? '\' : ( ($Wind -lt -0.8) ? '/' : '|' ) )
-              $script:NewColor[$idx2] = $packed
-            }
-          }
         }
       }
 
