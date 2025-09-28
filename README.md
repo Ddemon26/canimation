@@ -16,12 +16,6 @@ A collection of terminal animations including Matrix effects, 3D wireframes, Con
 3. Make scripts executable: `chmod +x shell/*.sh`
 4. Run an animation: `./shell/cmatrix.sh`
 
-## Available Animations
-
-**PowerShell Scripts:** Matrix, Donut, DVD screensaver, Fireworks, Flow effects, Meteors, Rain, Snow, Wireframe shapes, Conway's Game of Life, Hearts, Plasma, Starwarp, Text ring, Tunnel, Waves, Boids, Cube, Equalizer, Fireflies, Rain+Snow combo, Smiley faces, and Random picker.
-
-**Shell Scripts:** Matrix effects with customizable options.
-
 ## Usage Examples
 
 ### PowerShell
