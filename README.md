@@ -1,20 +1,20 @@
 # canimation
 
 ## Matrix
-![Alt text](https://github.com/Ddemon26/canimation/.docs/Matrix-Original.gif)
+![Alt text](.docs/Matrix-Original.gif)
 ## Matrix Theme (Ice)
-![Alt text](https://github.com/Ddemon26/canimation/.docs/Matrix-Theme_Ice.gif)
+![Alt text](.docs/Matrix-Theme_Ice.gif)
 ## Donut
-![Alt text](https://github.com/Ddemon26/canimation/.docs/Donut.gif)
+![Alt text](.docs/Donut.gif)
 ## Classic DVD Idle Screen
-![Alt text](https://github.com/Ddemon26/canimation/.docs/Dvd.gif)
+![Alt text](.docs/Dvd.gif)
 ## Fireworks
-![Alt text](https://github.com/Ddemon26/canimation/.docs/Fireworks.gif)
+![Alt text](.docs/Fireworks.gif)
 ## Trippy Flow
-![Alt text](https://github.com/Ddemon26/canimation/.docs/Flow.gif)
+![Alt text](.docs/Flow.gif)
 ## Shower of Meteors
-![Alt text](https://github.com/Ddemon26/canimation/.docs/Meteor.gif)
+![Alt text](.docs/Meteor.gif)
 ## Rain for the depressed
-![Alt text](https://github.com/Ddemon26/canimation/.docs/Rain.gif)
+![Alt text](.docs/Rain.gif)
 ## Chrismas is coming.
-![Alt text](https://github.com/Ddemon26/canimation/.docs/Snow.gif)
+![Alt text](.docs/Snow.gif)
