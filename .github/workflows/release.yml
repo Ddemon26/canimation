@@ -1,0 +1,41 @@
+name: Create Release with Packages
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Create PowerShell package
+      run: |
+        mkdir -p dist
+        cd pwsh
+        zip -r ../dist/canimation-pwsh.zip .
+        cd ..
+    
+    - name: Create Shell package
+      run: |
+        cd shell
+        zip -r ../dist/canimation-shell.zip .
+        cd ..
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/canimation-pwsh.zip
+          dist/canimation-shell.zip
+        generate_release_notes: true
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
