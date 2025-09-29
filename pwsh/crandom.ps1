@@ -24,10 +24,20 @@
   Animation names to exclude from random selection (without .ps1 extension).
 
 .EXAMPLE
-  ./crandom.ps1
-  ./crandom.ps1 -Fps 60 -Speed 2
-  ./crandom.ps1 -List
-  ./crandom.ps1 -Exclude cmatrix,cdonut
+  .\crandom.ps1
+  Run a random animation with default settings.
+
+.EXAMPLE
+  .\crandom.ps1 -Fps 60 -Speed 2
+  Run a random animation at 60 FPS with double speed.
+
+.EXAMPLE
+  .\crandom.ps1 -List
+  List all available animations without running.
+
+.EXAMPLE
+  .\crandom.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -36,8 +46,76 @@ param(
   [ValidateRange(0.1,5.0)][double]$Speed,
   [switch]$NoHardClear,
   [switch]$List,
-  [string[]]$Exclude = @()
+  [string[]]$Exclude = @(),
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+Random Animation Launcher
+==========================
+
+SYNOPSIS
+    Randomly selects and runs one of the available animation scripts.
+
+USAGE
+    .\crandom.ps1 [OPTIONS]
+    .\crandom.ps1 -h
+
+DESCRIPTION
+    Scans the current directory for animation scripts and randomly picks one
+    to execute. Useful for variety or when you can't decide which animation
+    to watch. Passes through common parameters to the selected animation.
+
+OPTIONS
+    -Fps <int>          Target FPS to pass to animation (5-120)
+    -Speed <double>     Speed multiplier to pass (0.1-5.0)
+    -NoHardClear        Don't clear screen on exit
+    -List               List available animations without running
+    -Exclude <array>    Animation names to exclude (without .ps1)
+    -h                  Show this help and exit
+
+EXAMPLES
+    .\crandom.ps1
+        Run a random animation with default settings
+
+    .\crandom.ps1 -Fps 60 -Speed 2
+        Random animation at high framerate and double speed
+
+    .\crandom.ps1 -List
+        Show all available animations
+
+    .\crandom.ps1 -Exclude cmatrix,cdonut
+        Run random animation, excluding cmatrix and cdonut
+
+    .\crandom.ps1 -NoHardClear
+        Random animation that leaves screen as-is on exit
+
+    .\crandom.ps1 -Fps 30 -Exclude cboids,clife,cwire
+        Random animation at 30 FPS, excluding specific ones
+
+BEHAVIOR
+    - Automatically excludes crandom.ps1 and theme variants
+    - Only selects from animation scripts in current directory
+    - Passes Fps, Speed, and NoHardClear to selected animation
+    - Not all animations support all parameters
+    - Shows which animation was selected before running
+
+CONTROLS
+    Depends on the selected animation (typically any key to exit)
+
+NOTES
+    - Use -List to see what animations are available
+    - Exclude parameter takes script names without .ps1 extension
+    - Parameters are passed if the animation supports them
+    - Great for screensaver-style random variety
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

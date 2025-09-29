@@ -25,6 +25,18 @@
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit; leave the screen as-is.
+
+.EXAMPLE
+  .\cplasma.ps1
+  Run with default Fire mode.
+
+.EXAMPLE
+  .\cplasma.ps1 -Mode Plasma
+  Classic sine-wave plasma effect.
+
+.EXAMPLE
+  .\cplasma.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -33,8 +45,81 @@ param(
   [double]$Speed = 1.0,
   [ValidateSet('Fire','Plasma')][string]$Mode = 'Fire',
   [string]$Ramp = " .:-=+*#%@",
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+ASCII Fire / Plasma Effect
+===========================
+
+SYNOPSIS
+    Animated fire or plasma effects with ASCII characters and color gradients.
+
+USAGE
+    .\cplasma.ps1 [OPTIONS]
+    .\cplasma.ps1 -h
+
+DESCRIPTION
+    Creates dynamic visual effects using ASCII characters and color gradients.
+    Fire mode simulates flickering flames rising upward, while Plasma mode
+    creates classic demoscene-style sine wave patterns. Uses differential
+    rendering for smooth performance.
+
+OPTIONS
+    -Fps <int>          Target frames per second (5-120, default: 30)
+    -Speed <double>     Animation speed multiplier (default: 1.0)
+    -Mode <string>      Effect mode: Fire or Plasma (default: Fire)
+    -Ramp <string>      ASCII brightness ramp (default: " .:-=+*#%@")
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+MODES
+    Fire
+        Simulates rising flames with flickering effect
+        Color gradient: black → red → orange → yellow → white
+        Heat rises from bottom with natural flicker
+        Vertical bias creates realistic fire movement
+
+    Plasma
+        Classic 2D sine-wave plasma effect
+        Rainbow color gradient with smooth transitions
+        Multiple sine waves interfere to create patterns
+        Psychedelic, mesmerizing visual effect
+
+EXAMPLES
+    .\cplasma.ps1
+        Default fire effect
+
+    .\cplasma.ps1 -Mode Plasma
+        Rainbow plasma effect
+
+    .\cplasma.ps1 -Mode Fire -Speed 1.5 -Fps 60
+        Fast, high-framerate fire
+
+    .\cplasma.ps1 -Mode Plasma -Speed 0.5
+        Slow, dreamy plasma waves
+
+    .\cplasma.ps1 -Ramp " .-+*%@#"
+        Custom ASCII gradient ramp
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Fire mode uses realistic heat simulation with upward bias
+    - Plasma mode creates classic demoscene-style effects
+    - Ramp parameter controls ASCII character progression
+    - Higher Speed values create faster, more energetic animations
+    - Uses differential rendering (only updates changed cells)
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

@@ -26,6 +26,18 @@
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit; leave the screen as-is.
+
+.EXAMPLE
+  .\cwire.ps1
+  Run with default octahedron.
+
+.EXAMPLE
+  .\cwire.ps1 -Shape Dodecahedron -Rainbow
+  Complex dodecahedron with rainbow colors.
+
+.EXAMPLE
+  .\cwire.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -35,8 +47,89 @@ param(
   [double]$Speed = 1.0,
   [ValidateSet('Pyramid','Octahedron','Dodecahedron')][string]$Shape = 'Octahedron',
   [switch]$Rainbow,
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+Rotating Wireframe Shapes
+==========================
+
+SYNOPSIS
+    3D rotating wireframe polyhedra with ASCII line drawing.
+
+USAGE
+    .\cwire.ps1 [OPTIONS]
+    .\cwire.ps1 -h
+
+DESCRIPTION
+    Renders rotating 3D wireframe polyhedra using ASCII characters for edges.
+    Choose from three geometric shapes with varying complexity. Optional
+    rainbow coloring for edges, or classic Matrix green. Features proper
+    3D rotation and perspective projection.
+
+OPTIONS
+    -Fps <int>          Target frames per second (5-120, default: 30)
+    -Size <int>         Visual scale (8-120, default: 18)
+    -Speed <double>     Rotation speed multiplier (default: 1.0)
+    -Shape <string>     Polyhedron type (default: Octahedron)
+    -Rainbow            Use rainbow edge colors
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+SHAPES
+    Pyramid
+        4 vertices, 6 edges (tetrahedron)
+        Simplest shape, clean appearance
+
+    Octahedron
+        6 vertices, 12 edges
+        Double pyramid, balanced complexity
+        Default shape
+
+    Dodecahedron
+        20 vertices, 30 edges
+        Complex 12-sided polyhedron
+        Most intricate and visually impressive
+
+EXAMPLES
+    .\cwire.ps1
+        Default octahedron in green
+
+    .\cwire.ps1 -Shape Pyramid
+        Simple pyramid wireframe
+
+    .\cwire.ps1 -Shape Dodecahedron -Rainbow
+        Complex dodecahedron with rainbow colors
+
+    .\cwire.ps1 -Size 30 -Speed 0.5
+        Large, slow-rotating octahedron
+
+    .\cwire.ps1 -Shape Pyramid -Rainbow -Fps 60
+        Fast rainbow pyramid at high framerate
+
+    .\cwire.ps1 -Shape Dodecahedron -Size 25 -Speed 1.5
+        Large, fast dodecahedron
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Uses proper 3D rotation matrices and perspective projection
+    - Edges drawn with ASCII line characters (|, -, /, \)
+    - Rainbow mode gives each edge a unique color
+    - Larger Size values need wider terminals
+    - Dodecahedron is the most complex with 30 edges
+    - Speed can be fractional for slower rotation
+    - Uses differential rendering (only updates changed cells)
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

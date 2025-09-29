@@ -16,11 +16,26 @@
 .PARAMETER Speed
   Rotation speed multiplier (default: 1.0).
 
+.PARAMETER Thickness
+  Coin thickness (0.2-0.9, default: 0.45).
+
 .PARAMETER Theme
   Coin color theme. Options: Gold, Silver, Rainbow. (Default: Gold)
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit; leave the screen as-is.
+
+.EXAMPLE
+  .\csmiley.ps1
+  Run with default gold coin.
+
+.EXAMPLE
+  .\csmiley.ps1 -Theme Rainbow -Size 20
+  Large rainbow smiley coin.
+
+.EXAMPLE
+  .\csmiley.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -30,8 +45,78 @@ param(
   [double]$Speed = 1.0,
   [ValidateRange(0.2,0.9)][double]$Thickness = 0.45,
   [ValidateSet('Gold','Silver','Rainbow')][string]$Theme = 'Gold',
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+Rotating Smiley Face Coin
+=========================
+
+SYNOPSIS
+    3D rotating ASCII smiley face coin with shading and color themes.
+
+USAGE
+    .\csmiley.ps1 [OPTIONS]
+    .\csmiley.ps1 -h
+
+DESCRIPTION
+    A spinning coin featuring a classic smiley face (two eyes and a smile).
+    The coin rotates in 3D space with proper depth shading and thickness.
+    Choose from metallic or rainbow themes. Uses differential rendering
+    for smooth animation.
+
+OPTIONS
+    -Fps <int>          Target frames per second (5-120, default: 30)
+    -Size <int>         Coin radius in characters (8-60, default: 12)
+    -Speed <double>     Rotation speed multiplier (default: 1.0)
+    -Thickness <double> Coin thickness (0.2-0.9, default: 0.45)
+    -Theme <string>     Color theme (default: Gold)
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+THEMES
+    Gold      Golden yellow coin with metallic shading
+    Silver    Shiny silver/gray coin
+    Rainbow   Multi-colored rainbow gradient
+
+EXAMPLES
+    .\csmiley.ps1
+        Default gold coin
+
+    .\csmiley.ps1 -Theme Silver
+        Silver metallic coin
+
+    .\csmiley.ps1 -Theme Rainbow -Size 20
+        Large rainbow smiley
+
+    .\csmiley.ps1 -Speed 2 -Fps 60
+        Fast-spinning coin at high framerate
+
+    .\csmiley.ps1 -Size 30 -Thickness 0.7
+        Large, thick coin
+
+    .\csmiley.ps1 -Theme Gold -Speed 0.5
+        Slow, smooth gold coin rotation
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Features classic smiley face (two eyes and curved smile)
+    - 3D rotation with proper depth perspective
+    - Thickness parameter affects coin's 3D appearance
+    - Larger Size values work best in wide terminals
+    - Shading creates realistic metallic appearance
+    - Uses differential rendering (only updates changed cells)
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

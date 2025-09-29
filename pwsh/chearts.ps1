@@ -22,6 +22,18 @@
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit; leave the screen as-is.
+
+.EXAMPLE
+  .\chearts.ps1
+  Run with default settings.
+
+.EXAMPLE
+  .\chearts.ps1 -Pulse -Density 60
+  More hearts with pulsing brightness effect.
+
+.EXAMPLE
+  .\chearts.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -30,8 +42,64 @@ param(
   [double]$Speed = 1.0,
   [ValidateRange(1,200)][int]$Density = 40,
   [switch]$Pulse,
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+Hearts Field Animation
+======================
+
+SYNOPSIS
+    Drifting ASCII "<3" hearts with gentle motion and differential rendering.
+
+USAGE
+    .\chearts.ps1 [OPTIONS]
+    .\chearts.ps1 -h
+
+DESCRIPTION
+    Pink/red colored hearts drift upward across the screen with a gentle
+    sideways wobble. Optional pulsing brightness creates a soft glow effect.
+    Uses differential rendering for smooth performance.
+
+OPTIONS
+    -Fps <int>          Target frames per second (5-120, default: 30)
+    -Speed <double>     Movement speed multiplier (default: 1.0)
+    -Density <int>      Hearts per 10,000 cells (1-200, default: 40)
+                        Scales automatically with terminal size
+    -Pulse              Enable brightness pulsing for glow effect
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+EXAMPLES
+    .\chearts.ps1
+        Run with default settings
+
+    .\chearts.ps1 -Pulse
+        Enable pulsing glow effect
+
+    .\chearts.ps1 -Density 80 -Speed 1.5 -Pulse
+        More hearts, faster movement, with pulsing
+
+    .\chearts.ps1 -Density 20 -Speed 0.5
+        Sparse, slow-moving hearts
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Hearts use pink/red hues (HSV ~330°) for a romantic effect
+    - Density automatically scales with your terminal size
+    - Each heart consists of two characters: "<3"
+    - Pulse effect creates a soft breathing glow
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

@@ -24,6 +24,18 @@
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit; leave the screen as-is.
+
+.EXAMPLE
+  .\clife.ps1
+  Run with default random pattern.
+
+.EXAMPLE
+  .\clife.ps1 -Pattern Gosper -ColorMode Age
+  Start with Gosper Glider Gun, age-based coloring.
+
+.EXAMPLE
+  .\clife.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -33,8 +45,86 @@ param(
   [ValidateSet('Random','Glider','Pulsar','Gosper','Acorn')][string]$Pattern = 'Random',
   [ValidateSet('Mono','Age','Rainbow','Pulse')][string]$ColorMode = 'Mono',
   [switch]$WrapEdges,
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+Conway's Game of Life
+=====================
+
+SYNOPSIS
+    Classic cellular automaton with differential rendering and multiple patterns.
+
+USAGE
+    .\clife.ps1 [OPTIONS]
+    .\clife.ps1 -h
+
+DESCRIPTION
+    Conway's Game of Life with classic rules: cells live or die based on
+    their neighbors. Features famous patterns, multiple color modes, and
+    optional edge wrapping for toroidal topology.
+
+GAME RULES
+    - A live cell with 2-3 neighbors survives
+    - A dead cell with exactly 3 neighbors becomes alive
+    - All other cells die or stay dead
+
+OPTIONS
+    -Fps <int>          Target frames per second (1-60, default: 10)
+    -Density <double>   Random seed density (0.1-0.9, default: 0.3)
+                        Only used for Random pattern
+    -Pattern <string>   Starting pattern (default: Random)
+    -ColorMode <string> Cell coloring scheme (default: Mono)
+    -WrapEdges          Enable toroidal topology (wrap around edges)
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+PATTERNS
+    Random    Random seed based on Density parameter
+    Glider    Small diagonal-moving spaceship
+    Pulsar    Period-3 oscillator (symmetric pattern)
+    Gosper    Gosper Glider Gun (produces gliders indefinitely)
+    Acorn     Methuselah pattern (takes 5206 generations to stabilize)
+
+COLOR MODES
+    Mono      Single green color (classic)
+    Age       Color based on cell age (older = different color)
+    Rainbow   Rainbow colors across the field
+    Pulse     Pulsing brightness effect
+
+EXAMPLES
+    .\clife.ps1
+        Random pattern with default settings
+
+    .\clife.ps1 -Pattern Gosper -WrapEdges
+        Gosper Glider Gun on wrapped edges
+
+    .\clife.ps1 -Pattern Pulsar -ColorMode Rainbow
+        Pulsar oscillator with rainbow colors
+
+    .\clife.ps1 -Pattern Acorn -ColorMode Age -Fps 20
+        Watch Acorn evolve with age-based colors at faster speed
+
+    .\clife.ps1 -Density 0.5 -WrapEdges -ColorMode Pulse
+        Dense random start with pulsing on toroidal grid
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Uses differential rendering (only updates changed cells)
+    - Edge wrapping creates infinite toroidal space
+    - Acorn pattern takes over 5000 generations to stabilize
+    - Age mode shows how long cells have been alive
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

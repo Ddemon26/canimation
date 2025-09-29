@@ -18,7 +18,7 @@
   Base vertical speed for glyphs (default: 1).
 
 .PARAMETER Letters
-  Include letters (more “human” looking). Default is symbols-only.
+  Include letters (more "human" looking). Default is symbols-only.
 
 .PARAMETER WhiteLeader
   Use white for the leading glyph instead of neon green.
@@ -26,12 +26,20 @@
 .PARAMETER NoHardClear
   Skip the hard terminal reset on exit. (Default is to hard-clear.)
 
+.PARAMETER Theme
+  Color theme for the matrix rain (default: Rainbow).
+
 .EXAMPLE
-  ./cmatrix.ps1
-  ./cmatrix.ps1 -Fps 45 -Speed 2
-  ./cmatrix.ps1 -Letters
-  ./cmatrix.ps1 -WhiteLeader
-  ./cmatrix.ps1 -NoHardClear   # if you don't want a full terminal reset on exit
+  .\cmatrix-themes.ps1
+  Run with default Rainbow theme.
+
+.EXAMPLE
+  .\cmatrix-themes.ps1 -Theme Matrix -Letters
+  Classic Matrix green with letter glyphs.
+
+.EXAMPLE
+  .\cmatrix-themes.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -40,10 +48,87 @@ param(
   [ValidateRange(1,5)][int]$Speed = 1,
   [switch]$Letters,
   [switch]$WhiteLeader,
-  [switch]$NoHardClear
-  , [ValidateSet('Matrix','Rainbow','Aurora','Cyberpunk','Fire','Ice','Grayscale','Amber','Pride','Christmas','Sunset','RandomGlyph')]
-  [string]$Theme = 'Rainbow'
+  [switch]$NoHardClear,
+  [ValidateSet('Matrix','Rainbow','Aurora','Cyberpunk','Fire','Ice','Grayscale','Amber','Pride','Christmas','Sunset','RandomGlyph')]
+  [string]$Theme = 'Rainbow',
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+Matrix Rain with Themes
+=======================
+
+SYNOPSIS
+    Matrix-style falling characters with multiple color themes and effects.
+
+USAGE
+    .\cmatrix-themes.ps1 [OPTIONS]
+    .\cmatrix-themes.ps1 -h
+
+DESCRIPTION
+    Classic Matrix-style digital rain overlaid on your existing terminal content.
+    Features multiple color themes, optional letter glyphs, and configurable speed.
+    Respects your terminal theme and doesn't clear on start.
+
+OPTIONS
+    -Fps <int>          Target frames per second (5-120, default: 30)
+    -Speed <int>        Vertical glyph speed (1-5, default: 1)
+    -Letters            Include letter characters (more readable)
+    -WhiteLeader        White leading glyph instead of bright green
+    -Theme <string>     Color theme (default: Rainbow)
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+THEMES
+    Matrix        Classic neon green (the original)
+    Rainbow       Each column has a different rainbow color
+    Aurora        Shifting aurora-like colors
+    Cyberpunk     Cyan/blue cyberpunk aesthetic
+    Fire          Orange/red flame colors
+    Ice           Cool blue/white icy tones
+    Grayscale     Black and white only
+    Amber         Warm amber/orange (retro terminal)
+    Pride         Rainbow pride colors
+    Christmas     Red and green festive colors
+    Sunset        Orange to purple sunset gradient
+    RandomGlyph   Random colors per glyph
+
+EXAMPLES
+    .\cmatrix-themes.ps1
+        Default rainbow theme
+
+    .\cmatrix-themes.ps1 -Theme Matrix -Letters
+        Classic Matrix look with readable letters
+
+    .\cmatrix-themes.ps1 -Theme Fire -Speed 3 -Fps 60
+        Fast-moving fire theme at high framerate
+
+    .\cmatrix-themes.ps1 -Theme Cyberpunk -WhiteLeader
+        Cyberpunk theme with white leading characters
+
+    .\cmatrix-themes.ps1 -Theme Aurora -Letters -Speed 2
+        Shifting aurora colors with letters at medium speed
+
+    .\cmatrix-themes.ps1 -Theme Ice -NoHardClear
+        Icy theme, leaves screen as-is on exit
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Overlays on existing terminal content (doesn't clear on start)
+    - By default, performs hard clear on exit to remove all trails
+    - Letters switch makes glyphs more readable/recognizable
+    - Speed affects how fast columns fall (1=slow, 5=very fast)
+    - Each theme has unique color characteristics and feels
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

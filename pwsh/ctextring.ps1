@@ -30,6 +30,18 @@
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit; leave the screen as-is.
+
+.EXAMPLE
+  .\ctextring.ps1
+  Display "HELLO WORLD" in green.
+
+.EXAMPLE
+  .\ctextring.ps1 -Text "AWESOME" -Rainbow
+  Display custom text with rainbow colors.
+
+.EXAMPLE
+  .\ctextring.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -41,8 +53,80 @@ param(
   [ValidateRange(0.5,2.0)][double]$Spacing = 1.0,
   [switch]$Rainbow,
   [ValidateSet('Green','Cyan','Magenta','Yellow','White','Red','Blue')][string]$Color = 'Green',
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+Rotating Text Ring
+==================
+
+SYNOPSIS
+    Text arranged in a circle that rotates smoothly like a marquee.
+
+USAGE
+    .\ctextring.ps1 [OPTIONS]
+    .\ctextring.ps1 -h
+
+DESCRIPTION
+    Wraps your text around a circular path and rotates it continuously.
+    Characters are positioned along the circle's edge and spin smoothly.
+    Choose solid colors or rainbow gradients. Perfect for displaying
+    messages, names, or decorative text in a rotating loop.
+
+OPTIONS
+    -Text <string>      Text to display (default: "HELLO WORLD")
+    -Fps <int>          Target frames per second (5-120, default: 30)
+    -Size <int>         Circle radius in characters (6-80, default: 14)
+    -Speed <double>     Rotation speed multiplier (default: 1.0)
+    -Spacing <double>   Character spacing (0.5-2.0, default: 1.0)
+                        1.0 = normal, <1.0 = tight, >1.0 = loose
+    -Rainbow            Use rainbow gradient colors
+    -Color <string>     Solid color (default: Green)
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+COLOR OPTIONS
+    Green, Cyan, Magenta, Yellow, White, Red, Blue
+    (Only used when -Rainbow is not specified)
+
+EXAMPLES
+    .\ctextring.ps1
+        Default "HELLO WORLD" in green
+
+    .\ctextring.ps1 -Text "AWESOME" -Rainbow
+        Custom text with rainbow colors
+
+    .\ctextring.ps1 -Text "*** PARTY TIME ***" -Size 20 -Color Magenta
+        Large magenta ring
+
+    .\ctextring.ps1 -Text "SPINNING" -Speed 2 -Rainbow -Fps 60
+        Fast rainbow spin at high framerate
+
+    .\ctextring.ps1 -Text "COOL" -Spacing 1.5 -Color Cyan
+        Looser character spacing in cyan
+
+    .\ctextring.ps1 -Text "HAPPY BIRTHDAY!" -Size 25 -Rainbow -Speed 0.5
+        Large, slow rainbow birthday message
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Text repeats around the circle if needed
+    - Larger Size values need wider terminals
+    - Spacing affects how tight/loose characters are arranged
+    - Rainbow mode creates smooth color gradients
+    - Speed can be fractional for slower rotation (e.g., 0.5)
+    - Uses differential rendering (only updates changed cells)
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

@@ -33,6 +33,18 @@
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit; leave the screen as-is.
+
+.EXAMPLE
+  .\cflow.ps1
+  Run with default settings (Curl field).
+
+.EXAMPLE
+  .\cflow.ps1 -Field Perlin -HueShift
+  Use Perlin noise field with shifting hues.
+
+.EXAMPLE
+  .\cflow.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -44,8 +56,70 @@ param(
   [ValidateRange(0.85,0.99)][double]$Decay = 0.94,
   [string]$Ramp = " .:-=+*#%@",
   [switch]$HueShift,
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+Aurora / Flow Field Animation
+==============================
+
+SYNOPSIS
+    Curl or perlin-like noise driven particle streams with differential rendering.
+
+USAGE
+    .\cflow.ps1 [OPTIONS]
+    .\cflow.ps1 -h
+
+DESCRIPTION
+    Particles are advected by a vector field creating smooth, aurora-like trails.
+    Choose between fast analytic curl fields or prettier perlin noise fields.
+    Uses differential rendering for smooth performance with trail effects.
+
+OPTIONS
+    -Fps <int>          Target frames per second (5-120, default: 30)
+    -Speed <double>     Flow speed multiplier (default: 1.0)
+    -Field <string>     Field type: Curl or Perlin (default: Curl)
+    -Particles <int>    Number of particles (40-1000, default: 140)
+    -Decay <double>     Trail decay factor (0.85-0.99, default: 0.94)
+                        Higher values = longer trails
+    -Ramp <string>      ASCII brightness ramp (default: " .:-=+*#%@")
+    -HueShift           Enable time-based hue shifting
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+FIELD TYPES
+    Curl    Fast analytic curl field from summed trig functions
+    Perlin  Value-noise field with finite-difference curl (prettier, slower)
+
+EXAMPLES
+    .\cflow.ps1
+        Run with default Curl field
+
+    .\cflow.ps1 -Field Perlin -HueShift -Fps 60
+        Perlin noise with shifting colors at high framerate
+
+    .\cflow.ps1 -Particles 300 -Decay 0.96 -Speed 1.5
+        More particles with longer trails and faster movement
+
+    .\cflow.ps1 -Field Curl -Decay 0.88
+        Short trail effect with curl field
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Perlin field looks better but uses more CPU
+    - Higher Decay values create longer, smoother trails
+    - HueShift creates a slowly evolving color palette
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

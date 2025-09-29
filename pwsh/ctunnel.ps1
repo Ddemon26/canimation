@@ -28,6 +28,18 @@
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit; leave the screen as-is.
+
+.EXAMPLE
+  .\ctunnel.ps1
+  Run with default swirl mode.
+
+.EXAMPLE
+  .\ctunnel.ps1 -Mode Spiral -Depth 3
+  Tight spiral pattern with increased depth.
+
+.EXAMPLE
+  .\ctunnel.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -37,8 +49,82 @@ param(
   [ValidateSet('Swirl','Spiral')][string]$Mode = 'Swirl',
   [double]$Depth = 2.0,
   [string]$Ramp = " .:-=+*#%@",
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+ASCII Tunnel Effect
+===================
+
+SYNOPSIS
+    Psychedelic radial tunnel with swirling or spiral patterns and colors.
+
+USAGE
+    .\ctunnel.ps1 [OPTIONS]
+    .\ctunnel.ps1 -h
+
+DESCRIPTION
+    Creates a mesmerizing tunnel effect with flowing patterns radiating from
+    the center. Choose between concentric swirling rings or logarithmic
+    spirals. Colors shift based on angle and depth, creating a hypnotic
+    visual experience. Classic demoscene-style effect.
+
+OPTIONS
+    -Fps <int>          Target frames per second (5-120, default: 30)
+    -Speed <double>     Animation speed multiplier (default: 1.0)
+    -Mode <string>      Pattern mode: Swirl or Spiral (default: Swirl)
+    -Depth <double>     Depth/twist factor (default: 2.0)
+                        Higher values = tighter patterns
+    -Ramp <string>      ASCII brightness ramp (default: " .:-=+*#%@")
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+MODES
+    Swirl
+        Concentric banded rings flowing inward/outward
+        Hue varies by angle creating rainbow bands
+        Smooth, hypnotic radial flow
+
+    Spiral
+        Logarithmic spiral stripes radiating from center
+        Hue shifts with both angle and depth
+        More complex, twisted visual pattern
+
+EXAMPLES
+    .\ctunnel.ps1
+        Default swirl mode
+
+    .\ctunnel.ps1 -Mode Spiral
+        Spiral pattern mode
+
+    .\ctunnel.ps1 -Depth 3 -Speed 1.5
+        Tighter pattern with faster animation
+
+    .\ctunnel.ps1 -Mode Spiral -Depth 4 -Fps 60
+        Very tight spiral at high framerate
+
+    .\ctunnel.ps1 -Mode Swirl -Speed 0.5 -Depth 1.5
+        Slow, loose swirl pattern
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Depth parameter affects pattern density and tightness
+    - Higher Depth = more rings/spirals, tighter effect
+    - Colors are based on radial angle (creates rainbow effect)
+    - Classic demoscene/psychedelic tunnel aesthetic
+    - Swirl mode is smoother, Spiral mode is more complex
+    - Uses differential rendering (only updates changed cells)
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

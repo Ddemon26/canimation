@@ -33,6 +33,18 @@
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit; leave the screen as-is.
+
+.EXAMPLE
+  .\cmeteor.ps1
+  Run with default settings.
+
+.EXAMPLE
+  .\cmeteor.ps1 -Rainbow -Rate 8
+  Rainbow colored meteors at high spawn rate.
+
+.EXAMPLE
+  .\cmeteor.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -44,8 +56,84 @@ param(
   [ValidateRange(0,180)][int]$Angle = 65,
   [string]$Ramp = " .:-=+*#%@",
   [switch]$Rainbow,
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+Meteor Shower Animation
+========================
+
+SYNOPSIS
+    Diagonal streaking meteors with decay trails and differential rendering.
+
+USAGE
+    .\cmeteor.ps1 [OPTIONS]
+    .\cmeteor.ps1 -h
+
+DESCRIPTION
+    Meteors streak across the screen at a configurable angle, leaving behind
+    smooth fading trails. Each meteor has its own decay trail created by a
+    per-cell intensity buffer. Supports both classic white/yellow meteors
+    and rainbow colors.
+
+OPTIONS
+    -Fps <int>          Target frames per second (5-120, default: 30)
+    -Speed <double>     Meteor movement speed multiplier (default: 1.0)
+    -Rate <double>      Meteors spawned per second (0.1-20, default: 3.0)
+    -Trail <double>     Trail decay factor (0.80-0.98, default: 0.91)
+                        Higher values = longer, smoother trails
+    -Angle <int>        Fall angle in degrees (0-180, default: 65)
+                        45 = diagonal, 90 = straight down
+    -Ramp <string>      ASCII brightness ramp (default: " .:-=+*#%@")
+    -Rainbow            Use rainbow colors instead of white/yellow
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+ANGLE GUIDE
+    0°      Horizontal (left to right)
+    45°     Diagonal (classic meteor look)
+    65°     Default (slightly more vertical)
+    90°     Straight down (vertical)
+    135°    Diagonal (top-right to bottom-left)
+    180°    Horizontal (right to left)
+
+EXAMPLES
+    .\cmeteor.ps1
+        Default meteor shower
+
+    .\cmeteor.ps1 -Rainbow
+        Rainbow colored meteors
+
+    .\cmeteor.ps1 -Rate 10 -Speed 1.5 -Angle 45
+        Heavy meteor shower at 45° diagonal
+
+    .\cmeteor.ps1 -Trail 0.95 -Rate 5
+        Fewer meteors with very long trails
+
+    .\cmeteor.ps1 -Angle 90 -Speed 2 -Rainbow
+        Fast vertical rainbow meteors
+
+    .\cmeteor.ps1 -Trail 0.85 -Rate 15
+        Many meteors with short trails
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Trail parameter controls decay: higher = longer trails
+    - Rate controls spawn frequency (meteors per second)
+    - Angle 45-65° creates the most realistic meteor look
+    - Rainbow mode gives each meteor a random color
+    - Uses differential rendering for smooth performance
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

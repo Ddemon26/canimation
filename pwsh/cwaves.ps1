@@ -32,6 +32,18 @@
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit; leave the screen as-is.
+
+.EXAMPLE
+  .\cwaves.ps1
+  Run with default ocean palette.
+
+.EXAMPLE
+  .\cwaves.ps1 -Palette Rainbow -Sources 6
+  Rainbow colors with 6 wave sources.
+
+.EXAMPLE
+  .\cwaves.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -43,8 +55,82 @@ param(
   [string]$Ramp = " .:-=+*#%@",
   [ValidateRange(0,10)][int]$Amplitude = 3,
   [double]$Scale = 10.0,
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+ASCII Ripple/Waves Effect
+==========================
+
+SYNOPSIS
+    Wave interference patterns with optional screen wobble effect.
+
+USAGE
+    .\cwaves.ps1 [OPTIONS]
+    .\cwaves.ps1 -h
+
+DESCRIPTION
+    Simulates multiple wave sources creating interference patterns across
+    the screen. Waves ripple and interact, creating mesmerizing patterns.
+    Optional horizontal wobble creates a liquid screen distortion effect.
+    Choose from ocean, rainbow, or monochrome color palettes.
+
+OPTIONS
+    -Fps <int>          Target frames per second (5-120, default: 30)
+    -Speed <double>     Animation speed multiplier (default: 1.0)
+    -Sources <int>      Number of wave sources (1-8, default: 4)
+    -Palette <string>   Color palette (default: Ocean)
+    -Ramp <string>      ASCII brightness ramp (default: " .:-=+*#%@")
+    -Amplitude <int>    Horizontal wobble amount (0-10, default: 3)
+                        0 = no wobble, 10 = maximum distortion
+    -Scale <double>     Wave width (default: 10.0)
+                        Higher values = wider, slower ripples
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+PALETTES
+    Ocean       Blue/cyan ocean colors (default)
+    Rainbow     Full spectrum rainbow gradient
+    Mono        Single green color (classic terminal)
+
+EXAMPLES
+    .\cwaves.ps1
+        Default ocean waves with 4 sources
+
+    .\cwaves.ps1 -Palette Rainbow
+        Rainbow colored interference patterns
+
+    .\cwaves.ps1 -Sources 8 -Amplitude 5
+        Many wave sources with strong wobble
+
+    .\cwaves.ps1 -Palette Ocean -Scale 15 -Speed 0.5
+        Wide, slow ocean waves
+
+    .\cwaves.ps1 -Sources 2 -Amplitude 0 -Palette Mono
+        Simple two-wave pattern without wobble
+
+    .\cwaves.ps1 -Palette Rainbow -Sources 6 -Speed 2 -Fps 60
+        Fast rainbow interference at high framerate
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Multiple wave sources create interference patterns
+    - Amplitude controls horizontal screen distortion/wobble
+    - Scale affects ripple width (higher = wider waves)
+    - More Sources = more complex interference patterns
+    - Wobble effect creates liquid screen appearance
+    - Uses differential rendering (only updates changed cells)
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

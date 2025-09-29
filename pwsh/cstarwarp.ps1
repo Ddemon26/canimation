@@ -21,6 +21,18 @@
 
 .PARAMETER NoHardClear
   Skip the final hard clear (RIS) on exit; leave the screen as-is.
+
+.EXAMPLE
+  .\cstarwarp.ps1
+  Run with default settings.
+
+.EXAMPLE
+  .\cstarwarp.ps1 -Trails -Speed 2
+  Warp speed with colorful trails.
+
+.EXAMPLE
+  .\cstarwarp.ps1 -h
+  Display help message.
 #>
 
 [CmdletBinding()]
@@ -29,8 +41,73 @@ param(
   [ValidateRange(0.1,5.0)][double]$Speed = 1.0,
   [ValidateRange(50,500)][int]$StarCount = 150,
   [switch]$Trails,
-  [switch]$NoHardClear
+  [switch]$NoHardClear,
+  [Alias("h")][switch]$Help
 )
+
+# Handle help request
+if ($Help) {
+    $helpText = @"
+
+Star Field Warp Effect
+=======================
+
+SYNOPSIS
+    Classic starfield warp speed effect with streaming stars and optional trails.
+
+USAGE
+    .\cstarwarp.ps1 [OPTIONS]
+    .\cstarwarp.ps1 -h
+
+DESCRIPTION
+    Simulates traveling at warp speed through a star field. Stars stream
+    from the center outward, accelerating as they approach the edges.
+    Optional colorful trails create light-speed streaks. Classic sci-fi
+    hyperspace effect with differential rendering.
+
+OPTIONS
+    -Fps <int>          Target frames per second (5-120, default: 30)
+    -Speed <double>     Warp speed multiplier (0.1-5.0, default: 1.0)
+    -StarCount <int>    Number of stars (50-500, default: 150)
+    -Trails             Enable colorful star trails
+    -NoHardClear        Don't clear screen on exit
+    -h                  Show this help and exit
+
+EXAMPLES
+    .\cstarwarp.ps1
+        Default warp speed effect
+
+    .\cstarwarp.ps1 -Trails
+        Enable colorful light-speed trails
+
+    .\cstarwarp.ps1 -Speed 2 -StarCount 300
+        Faster warp with more stars
+
+    .\cstarwarp.ps1 -Trails -Speed 3 -Fps 60
+        Maximum warp speed with trails at high framerate
+
+    .\cstarwarp.ps1 -StarCount 100 -Speed 0.5
+        Fewer stars at slower, more relaxed pace
+
+    .\cstarwarp.ps1 -Trails -StarCount 250
+        Dense star field with colorful trails
+
+CONTROLS
+    Any key or Ctrl+C to exit
+
+NOTES
+    - Stars accelerate as they move away from center
+    - Trails option creates colorful light-speed streaks
+    - Higher Speed values create more dramatic warp effect
+    - More stars create denser, more impressive field
+    - Stars automatically respawn at center when they exit
+    - Classic sci-fi hyperspace/warp drive visual effect
+    - Uses differential rendering (only updates changed cells)
+
+"@
+    Write-Host $helpText
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
