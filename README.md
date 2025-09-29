@@ -2,20 +2,6 @@
 
 A collection of terminal animations including Matrix effects, 3D wireframes, Conway's Game of Life, DVD screensaver, fireworks, and more!
 
-## Installation
-
-### For Windows (PowerShell)
-1. Download the latest PowerShell package: [canimation-pwsh.zip](https://github.com/Ddemon26/canimation/releases/latest/download/canimation-pwsh.zip)
-2. Extract the zip file to your desired location
-3. Open PowerShell and navigate to the extracted directory
-4. Run any animation script: `./cmatrix.ps1` or `./crandom.ps1` for a random animation
-
-### For Linux/macOS (Shell)
-1. Download the latest Shell package: [canimation-shell.zip](https://github.com/Ddemon26/canimation/releases/latest/download/canimation-shell.zip)
-2. Extract the zip file: `unzip canimation-shell.zip`
-3. Make scripts executable: `chmod +x shell/*.sh`
-4. Run an animation: `./shell/cmatrix.sh`
-
 ## Usage Examples
 
 ### PowerShell
